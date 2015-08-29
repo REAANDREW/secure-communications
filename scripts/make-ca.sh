@@ -2,26 +2,15 @@
 
 rm -rf CA
 mkdir CA
-#This is where signed certs will be stored
-mkdir CA/certsdb
-#This is where copies of the original CSRs will be stored
-mkdir CA/certreqs
-#This is where your CRL will be stored
-mkdir CA/crl
-#This is where the private key for the CA will live
-mkdir CA/private
-
-#Protect your private directory
-chmod 700 CA/private
-
-#Create the flat-file DB for your certificates. This is where a list of all signed certs will go. Openssl will use this to keep track of what's happened.
+echo "01" > CA/serial.txt
+echo "01" > CA/crlnumber.txt
 touch CA/index.txt
 
 #Your system openssl.cnf may be in some place other than /etc/openssl.cnf. If it's not there, try /usr/lib/ssl/openssl.cnf or /usr/share/ssl/openssl.cnf. If all else fails, run locate openssl.cnf.
 cp scripts/openssl.cnf CA/
 cp scripts/client.ext CA/
 
-# Generate the CA for Client Certificates
+# Generate the CA for Certificates
 echo "openssl req -new -newkey rsa:2048 -nodes -keyout cakey.pem -out careq.pem -config ./openssl.cnf -subj '/C=US/ST=Denial/L=Springfield/O=Dis/CN=selfsigned_ca'" >> CA/generate_certs.sh
 echo "openssl ca -batch -create_serial -out cacert.pem -days 365 -keyfile cakey.pem -selfsign -extensions ca_ext -config ./openssl.cnf -infiles careq.pem" >> CA/generate_certs.sh
 

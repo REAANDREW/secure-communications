@@ -5,3 +5,4 @@ config/
 logs/
 c_files/*
 output.xml
+secure-communications
