@@ -1,0 +1,1 @@
+http://thomaskrehbiel.com/post/how_to_create_and_manage_certificates_with_openssl/
