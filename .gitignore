@@ -1,0 +1,7 @@
+node_modules/
+secure
+CA/
+config/
+logs/
+c_files/*
+output.xml
