@@ -6,9 +6,7 @@ echo "01" > CA/serial.txt
 echo "01" > CA/crlnumber.txt
 touch CA/index.txt
 
-#Your system openssl.cnf may be in some place other than /etc/openssl.cnf. If it's not there, try /usr/lib/ssl/openssl.cnf or /usr/share/ssl/openssl.cnf. If all else fails, run locate openssl.cnf.
 cp scripts/openssl.cnf CA/
-cp scripts/client.ext CA/
 
 # Generate the CA for Certificates
 echo "openssl req -new -newkey rsa:2048 -nodes -keyout cakey.pem -out careq.pem -config ./openssl.cnf -subj '/C=US/ST=Denial/L=Springfield/O=Dis/CN=selfsigned_ca'" >> CA/generate_certs.sh
@@ -18,13 +16,13 @@ echo "openssl ca -batch -create_serial -out cacert.pem -days 365 -keyfile cakey.
 
 # Generate the CA signed Server certifcate
 echo "openssl genrsa -out server.key 2048" >> CA/generate_certs.sh
-echo "openssl req -new -key server.key -nodes -config ./openssl.cnf -extensions ssl_server_ext -out server.csr -subj '/C=US/ST=Denial/L=Springfield/O=Dis/CN=secure.acme.com'" >> CA/generate_certs.sh
-echo "openssl x509 -req -days 365 -in server.csr -CA cacert.pem -CAkey cakey.pem -set_serial 01 -out server.pem" >> CA/generate_certs.sh
+echo "openssl req -new -key server.key -nodes -out server.csr -subj '/C=US/ST=Denial/L=Springfield/O=Dis/CN=secure.acme.com'" >> CA/generate_certs.sh
+echo "openssl x509 -req -days 365 -extfile ./openssl.cnf -extensions ssl_server_ext -in server.csr -CA cacert.pem -CAkey cakey.pem -set_serial 01 -out server.pem" >> CA/generate_certs.sh
 
 # Generate the CA signed Client certifcate
 echo "openssl genrsa -out client.key 2048" >> CA/generate_certs.sh
 echo "openssl req -new -key client.key -nodes -out client.csr -subj '/C=US/ST=Denial/L=Springfield/O=Dis/CN=secure.acme.com'" >> CA/generate_certs.sh
-echo "openssl x509 -req -days 365 -extfile client.ext -in client.csr -CA cacert.pem -CAkey cakey.pem -CAcreateserial -out client.pem" >> CA/generate_certs.sh
+echo "openssl x509 -req -days 365 -extfile ./openssl.cnf -extensions ssl_client_ext -in client.csr -CA cacert.pem -CAkey cakey.pem -CAcreateserial -out client.pem" >> CA/generate_certs.sh
 
 echo "*** Test the connection with a server with the following command"
 echo 'openssl s_client -connect secure.acme.com:8090 -tls1_2 -CAfile "$PWD/cacert.pem" -key client.key -cert client.pem -state > ssl_connection.log'
