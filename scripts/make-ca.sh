@@ -17,16 +17,9 @@ chmod 700 CA/private
 #Create the flat-file DB for your certificates. This is where a list of all signed certs will go. Openssl will use this to keep track of what's happened.
 touch CA/index.txt
 
-echo "basicConstraints        = CA:FALSE" >> CA/client.ext
-echo "nsCertType              = client" >> CA/client.ext
-echo "keyUsage                = digitalSignature, keyEncipherment" >> CA/client.ext
-echo "subjectKeyIdentifier    = hash" >> CA/client.ext
-echo "authorityKeyIdentifier  = keyid,issuer" >> CA/client.ext
-echo "extendedKeyUsage        = clientAuth" >> CA/client.ext
-echo "nsComment               = "OpenSSL Certificate for SSL Client"" >> CA/client.ext
-
 #Your system openssl.cnf may be in some place other than /etc/openssl.cnf. If it's not there, try /usr/lib/ssl/openssl.cnf or /usr/share/ssl/openssl.cnf. If all else fails, run locate openssl.cnf.
 cp scripts/openssl_a.cnf CA/
+cp scripts/client.ext CA/
 
 # Generate the CA for Client Certificates
 echo "openssl req -new -newkey rsa:2048 -nodes -keyout private/cakey.pem -out careq.pem -config ./openssl_a.cnf -subj '/C=US/ST=Denial/L=Springfield/O=Dis/CN=selfsigned_ca'" >> CA/generate_certs.sh

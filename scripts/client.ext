@@ -1,0 +1,7 @@
+basicConstraints        = CA:FALSE
+nsCertType              = client
+keyUsage                = digitalSignature, keyEncipherment
+subjectKeyIdentifier    = hash
+authorityKeyIdentifier  = keyid,issuer
+extendedKeyUsage        = clientAuth
+nsComment               = OpenSSL Certificate for SSL Client
