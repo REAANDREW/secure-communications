@@ -116,7 +116,7 @@ func main() {
 		fmt.Fprintf(w, "Hello cert")
 	})
 
-	serverCaCert, server_err := ioutil.ReadFile("./config/cacert.pem")
+	serverCaCert, server_err := ioutil.ReadFile("./CA/cacert.pem")
 	if server_err != nil {
 		panic(server_err)
 	}
