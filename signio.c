@@ -22,7 +22,6 @@
 #include "charutils.h"
 #endif
 
-xmlSecKeysMngrPtr load_trusted_certs(char** files, int files_size);
 
 SignatureManager* CreateSignatureManager(){
     SignatureManager* manager = malloc(sizeof(SignatureManager*));
@@ -123,8 +122,7 @@ void shutdown(SignatureManager* signatureManager){
  * Returns the pointer to newly created keys manager or NULL if an error
  * occurs.
  */
-xmlSecKeysMngrPtr 
-load_trusted_certs(char** files, int files_size) {
+xmlSecKeysMngrPtr load_trusted_certs(char** files, int files_size) {
     xmlSecKeysMngrPtr mngr;
     int i;
         
@@ -169,8 +167,7 @@ load_trusted_certs(char** files, int files_size) {
  *
  * Returns 0 on success or a negative value if an error occurs.
  */
-int 
-verify_file_contents(xmlSecKeysMngrPtr mngr, const char* xml_file_contents) {
+int verify(xmlSecKeysMngrPtr mngr, const char* xml_file_contents) {
     xmlDocPtr doc = NULL;
     xmlNodePtr node = NULL;
     xmlSecDSigCtxPtr dsigCtx = NULL;
@@ -242,8 +239,7 @@ done:
  *
  * Returns 0 on success or a negative value if an error occurs.
  */
-int 
-sign_file_contents(const char* xml_file_contents, const char* key_file, const char* cert_file, char** output) {
+int sign(const char* xml_file_contents, const char* key_file, const char* cert_file, char** output) {
     xmlDocPtr doc = NULL;
     xmlNodePtr signNode = NULL;
     xmlNodePtr refNode = NULL;

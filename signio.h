@@ -25,13 +25,13 @@ typedef struct SignatureManager {
 
 SignatureManager* CreateSignatureManager();
 
+xmlSecKeysMngrPtr load_trusted_certs(char** files, int files_size);
+
+int verify(xmlSecKeysMngrPtr mngr, const char* xml_file);
+
+int sign(const char* xml_file, const char* key_file, const char* cert_file, char** output);
+
 int init(SignatureManager* signatureManager);
 
 void shutdown(SignatureManager* signatureManager);
 
-xmlSecKeysMngrPtr 
-load_trusted_certs(char** files, int files_size);
-
-int verify_file_contents(xmlSecKeysMngrPtr mngr, const char* xml_file);
-
-int sign_file_contents(const char* xml_file, const char* key_file, const char* cert_file, char** output);

@@ -19,7 +19,7 @@ import (
 // seem to get ENVIRONMENT variables to pass in which are quoted
 //************
 //#cgo CFLAGS: -std=gnu11  -D__XMLSEC_FUNCTION__=__FUNCTION__ -DXMLSEC_NO_SIZE_T -DXMLSEC_NO_GOST=1 -DXMLSEC_NO_XKMS=1 -DXMLSEC_DL_LIBLTDL=1 -I/usr/local/include/xmlsec1 -I/usr/include/libxml2 -DXMLSEC_CRYPTO_DYNAMIC_LOADING=1 -DXMLSEC_CRYPTO=openssl
-#cgo CFLAGS: -std=gnu11  -D__XMLSEC_FUNCTION__=__FUNCTION__ -DXMLSEC_NO_SIZE_T -DXMLSEC_NO_GOST=1 -DXMLSEC_NO_XKMS=1 -DXMLSEC_NO_CRYPTO_DYNAMIC_LOADING=1 -I/usr/include/xmlsec1  -DXMLSEC_OPENSSL_100=1 -DXMLSEC_CRYPTO_OPENSSL=1 -I/usr/include/libxml2
+#cgo CFLAGS: -std=gnu11 -D__XMLSEC_FUNCTION__=__FUNCTION__ -DXMLSEC_NO_SIZE_T -DXMLSEC_NO_GOST=1 -DXMLSEC_NO_XKMS=1 -DXMLSEC_NO_CRYPTO_DYNAMIC_LOADING=1 -I/usr/include/xmlsec1  -DXMLSEC_OPENSSL_100=1 -DXMLSEC_CRYPTO_OPENSSL=1 -I/usr/include/libxml2
 //#cgo LDFLAGS: -L/usr/local/lib -lxmlsec1 -lltdl -lxslt  -lxml2 -lssl -lcrypto
 #cgo LDFLAGS: -lxmlsec1-openssl -lxmlsec1 -lssl -lcrypto -lxslt  -lxml2
 
@@ -55,8 +55,7 @@ func verify(xml string, certManager C.xmlSecKeysMngrPtr) bool {
 	cXml := C.CString(xml)
 
 	defer C.free(unsafe.Pointer(cXml))
-	verification := C.verify_file_contents(certManager, cXml)
-	fmt.Println("verification code %v", verification)
+	verification := C.verify(certManager, cXml)
 	if verification == 0 {
 		return true
 	} else {
@@ -80,7 +79,7 @@ func sign(xml string, keyPath string, certPath string) string {
 	defer C.free(unsafe.Pointer(cCertPath))
 
 	//This needs to be the part where the output is transferred by refrence argument
-	code := C.sign_file_contents(cXml, cKeyPath, cCertPath, &output)
+	code := C.sign(cXml, cKeyPath, cCertPath, &output)
 	//code := C.sign_file_contents(cXml, cKeyPath, cCertPath, &output, &size)
 	if code != 0 {
 		panic("Signing the data failed")
@@ -97,9 +96,12 @@ func main() {
 	outputPath, _ := filepath.Abs("./output.xml")
 	ioutil.WriteFile(outputPath, []byte(output), 0644)
 
-	certs := []string{"./CA/client.pem", "./CA/cacert.pem"}
+	certs := []string{"./CA/server.pem","./CA/cacert.pem"}
+	//certs := []string{}
 	certManager := createCertManager(certs)
-	verify(output, certManager)
+	verified := verify(output, certManager)
+	fmt.Println(fmt.Sprintf("Verified ? : %v", verified))
+
 	//fmt.Printf("Size of the signature %d \n output: %v \n validated %v\n", len(output), output, result)
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)

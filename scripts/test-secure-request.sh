@@ -5,7 +5,7 @@ ENDPOINT="$HOST:$PORT"
 curl --tlsv1.2 -v -s  \
     --resolve "$ENDPOINT:127.0.0.1" \
     --cacert config/cacert.pem \
-    --capath $PWD/CA/certsdb/ \
+    --capath $PWD/CA/ \
     --key config/client.key \
     --cert config/client.pem \
     -w "\n" \
