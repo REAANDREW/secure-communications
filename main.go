@@ -96,7 +96,7 @@ func main() {
 	outputPath, _ := filepath.Abs("./output.xml")
 	ioutil.WriteFile(outputPath, []byte(output), 0644)
 
-	certs := []string{"./CA/server.pem","./CA/cacert.pem"}
+	certs := []string{"./config/cacert.pem"}
 	//certs := []string{}
 	certManager := createCertManager(certs)
 	verified := verify(output, certManager)
